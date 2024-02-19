@@ -1,0 +1,35 @@
+<div class="center-item d-flex justify-content-center align-items-center flex-column">
+    <form autocomplete="off">
+        <div class="header flex-column d-flex justify-content-center align-items-center">
+            <img class="company-logo" src="../../../assets/icons/Speedyy logo.svg" alt="Logo" height="100" width="100" />
+            <h5 class="mt-3"><b>Order Details Dashboard</b></h5>
+        </div>
+        <div class="input-details mb-2" *ngIf="!isOtpSent; else otpInput">
+            <label class="input-heading"><strong>Phone Number</strong></label>
+            <mat-form-field appearance="outline">
+                <input matInput [formControl]="phone" type="text" placeholder="10 digit phone number">
+            </mat-form-field>
+            <app-form-error-msg [control]="phone"></app-form-error-msg>
+        </div>
+
+        <!-- Otp Input -->
+        <ng-template #otpInput>
+            <div class="input-details">
+                <label class="input-heading"><strong>Enter verification code</strong></label>
+                <ng-otp-input class="d-flex justify-content-center align-items-center" (onInputChange)="onOtpChange($event)" (keydown.enter)="verifyOtp()" [config]="otpInputConfig" #otpInputField>
+                </ng-otp-input>
+            </div>
+            <div class="d-flex justify-content-between mt-4">
+                <span>
+                    Didn't receive the OTP !  
+                    <span class="text-secondary" *ngIf="!canResendOtp">{{timeLeft}} secs left</span>
+                <span class="cursor-enabled text-secondary text-decoration-underline" *ngIf="canResendOtp" (click)="sendOtp()"><strong><u>Resend</u></strong></span>
+                </span>
+                <span class="cursor-enabled text-decoration-underline" (click)="signInAgain()"><strong><u>Sign in again</u></strong></span>
+            </div>
+        </ng-template>
+        <button type="submit" class="w-100 mt-2" (click)='!isOtpSent ? sendOtp() : verifyOtp()'>
+            <strong>{{!isOtpSent ? 'Send OTP' : 'Verify & Proceed'}}</strong>
+        </button>
+    </form>
+</div>

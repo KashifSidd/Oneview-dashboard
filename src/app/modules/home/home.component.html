@@ -1,0 +1,875 @@
+<!-- One View Dashboard View -->
+<section class="home-wrapper">
+    <div class="bg-white p-4 pt-5 pb-0">
+        <div class="d-flex justify-content-between align-items-center">
+            <span class="row align-items-center">
+                <h3 class="pl-3"><img src="../../../assets/icons/Speedyy logo.svg" alt="" width="65"> &nbsp;</h3>
+                <p class="d-flex align-items-center justify-content-center cursor-enabled service-dropdown px-4" [matMenuTriggerFor]="menu">
+                    <strong class="d-flex justify-content-center text-capitalize">{{serviceDisplayName[service]}}</strong>
+                    <mat-icon>arrow_drop_down</mat-icon>
+                    <mat-menu #menu="matMenu">
+                        <div class="cursor-enabled m-1" *ngFor="let item of serviceDisplayName | keyvalue" (click)="serviceSelectionChange(item.key)">
+                            {{item.value}}</div>
+                </mat-menu>
+                </p>
+            </span>
+            <input type="number" class="input-field col-4" name="search" id="search"
+       [placeholder]="service !== Services.PND ? 'Enter Order ID or Phone Number...' : 'Enter Order ID...'"
+       [(ngModel)]="orderId" (keydown.enter)="searchByOrderId()" (keydown)="handleKeyPressOnOrderId($event)">
+
+            <span class="d-flex align-items-center">
+                <span class="text-right">
+                    <strong class="text-dark">{{userName}}</strong>
+                    <p class="m-0">
+                        (
+                        <ng-container *ngFor="let role of roles; let i = index">
+                            <span>{{role}}</span>
+                            <span *ngIf="roles.length !== i+1"> | </span>
+                        </ng-container>
+                        )
+                    </p> 
+                </span>
+                <mat-icon class="cursor-enabled mx-2" (click)="logout()">power_settings_new</mat-icon>
+            </span>
+        </div>
+    </div>
+    <div class="no-order d-flex align-items-center flex-column gap-3 mt-5" *ngIf="!hasOneViewDetails">
+        <img src="assets/icons/no-result-found-icon.svg">
+        <h4 class="mt-5">{{ service !== Services.PND ? "Umm, Kindly enter order ID or Phone Number !!!" : "Umm, Kindly enter order ID !!!" }}</h4>
+    </div>
+    <main class="main-grid mt-1 p-4 bg-white" *ngIf="hasOneViewDetails">
+        <!--Outlet Details-->
+        <div *ngIf="service !== Services.PND">
+            <article class="cards cards--peach shadow mt-3">
+                <header>
+                    <h5><img class="img-cards--orange" src="assets/icons/outlet-details-icon.svg" alt=""><strong>OUTLET
+                            DETAILS</strong></h5>
+                </header>
+                <hr>
+                <div *ngIf="service === Services.Food">
+                    <label class="field-heading">Outlet Type</label>
+                    <p class="field-value text-capitalize">
+                        {{oneViewDetails.restaurantDetails.outletType?oneViewDetails.restaurantDetails.outletType:'N/A'}}</p>
+                </div>
+                <div>
+                    <label class="field-heading">Outlet ID</label>
+                    <p class="field-value">{{oneViewDetails.restaurantDetails.id}}</p>
+                </div>
+                <div>
+                    <label class="field-heading">Outlet Name</label>
+                    <p class="field-value">
+                        {{oneViewDetails.restaurantDetails.name?oneViewDetails.restaurantDetails.name:'N/A'}}</p>
+                </div>
+                <div>
+                    <label class="field-heading">POS Id</label>
+                    <p class="field-value">
+                        {{oneViewDetails.restaurantDetails.posId?oneViewDetails.restaurantDetails.posId:'N/A'}}</p>
+                </div>
+                <div>
+                    <label class="field-heading">POS Partner</label>
+                    <p class="field-value">
+                        {{oneViewDetails.restaurantDetails.posPartner?oneViewDetails.restaurantDetails.posPartner:'N/A'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Branch Name</label>
+                    <p class="field-value">
+                        {{oneViewDetails.restaurantDetails.branchName?oneViewDetails.restaurantDetails.branchName:'N/A'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Outlet Address</label>
+                    <p class="field-value">
+                        {{oneViewDetails.restaurantDetails.address?oneViewDetails.restaurantDetails.address:'N/A'}}</p>
+                </div>
+                <div>
+                    <label class="field-heading">Outlet Contact Number</label>
+                    <p class="field-value">
+                        {{oneViewDetails.restaurantDetails.contact?oneViewDetails.restaurantDetails.contact:'N/A'}}</p>
+                </div>
+                <div>
+                    <label class="field-heading">Outlet Image</label>
+                    <p><a href="{{oneViewDetails.restaurantDetails.imageUrl?oneViewDetails.restaurantDetails.imageUrl:'N/A'}}"
+                            target="_blank"> View Image</a>
+                    </p>
+                </div>
+            </article>
+        </div>
+        <!--Order Details-->
+        <div>
+            <article class="cards cards--green shadow mt-3">
+                <header>
+                    <h5><img class="img-cards--blue" src="../../../assets/icons/order-details-icon.svg"
+                            alt=""><strong>ORDER DETAILS</strong></h5>
+                </header>
+                <hr>
+                <div>
+                    <label class="field-heading">Order Id</label>
+                    <p class="field-value">
+                        {{oneViewDetails.orderDetails.orderId?oneViewDetails.orderDetails.orderId:'N/A'}}</p>
+                </div>
+                <div *ngIf="service === Services.Food">
+                    <label class="field-heading">Client Service Type</label>
+                    <p class="field-value">
+                        {{oneViewDetails.orderDetails.clientServiceType?oneViewDetails.orderDetails.clientServiceType:'N/A'}}</p>
+                </div>
+                <!-- <button class="buttons cursor-enabled" (click)="showPickupAndDropLocationGoogleMap()"
+                *ngIf="service === Services.PND">Pickup And Drop Location Map </button> -->
+                <hr>
+                <div class="d-flex justify-content-between"
+                    *ngFor="let orderItem of oneViewDetails.orderDetails.orderItems">
+                    <span class="w-75">
+                        {{orderItem.orderItemQuantity}} x {{orderItem.orderItemName}}
+                        <p class="order-variant-addons">
+                            <span *ngFor="let orderVariant of orderItem.orderVariants; let i=index">
+                                {{orderVariant.orderVaraintName}}
+                                <span
+                                    *ngIf="orderItem.orderVariants.length !== i+1 || orderItem.orderAddons.length">,&nbsp;</span>
+                            </span>
+                            <span *ngFor="let orderAddon of orderItem.orderAddons; let j=index">
+                                {{orderAddon.orderAddonName}}
+                                <span *ngIf="orderItem.orderAddons.length !== j+1">,&nbsp;</span>
+                            </span>
+                        </p>
+                    </span>
+                    <span class="field-value">{{orderItem.orderItemFinalPrice}}</span>
+                </div>
+                <!-- <ng-container *ngIf="service === Services.PND">
+                    <div class="row">
+                        <div class="col-6">
+                            <div>
+                                <label class="field-heading">Pickup Name</label>
+                                <p class="field-value">{{oneViewDetails.pickupDetails.name}}</p>
+                            </div>
+                            <div>
+                                <label class="field-heading">Pickup Contact</label>
+                                <p class="field-value">{{oneViewDetails.pickupDetails.contact}} </p>
+                            </div>
+                            <div>
+                                <label class="field-heading">Pickup Address</label>
+                                <p class="field-value">{{oneViewDetails.pickupDetails.address}} </p>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div>
+                                <label class="field-heading">Drop Name</label>
+                                <p class="field-value">{{oneViewDetails.dropDetails.name}} </p>
+                            </div>
+                            <div>
+                                <label class="field-heading">Drop Contact</label>
+                                <p class="field-value">{{oneViewDetails.dropDetails.contact}} </p>
+                            </div>
+                            <div>
+                                <label class="field-heading">Drop Address</label>
+                                <p class="field-value">{{oneViewDetails.dropDetails.address}} </p>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container> 
+                <hr> -->
+                <ng-container *ngIf="service !== Services.PND" [ngTemplateOutlet]="invoiceLineItems"></ng-container>
+                <ng-container *ngIf="service === Services.PND" [ngTemplateOutlet]="invoiceLineItemsPND">
+                </ng-container>
+            </article>
+        </div>
+        <!--Customer Details-->
+        <div>
+            <article class="cards cards--cyan shadow mt-3">
+                <header>
+                    <h5><img class="img-cards--green" src="../../../assets/icons/customer-details-icon.svg"
+                            alt=""><strong>CUSTOMER DETAILS</strong></h5>
+                </header>
+                <hr>
+                <div>
+                    <label class="field-heading">Customer ID</label>
+                    <p class="field-value">{{oneViewDetails.customerDetails.id?oneViewDetails.customerDetails.id:'N/A'}}
+                    </p>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span>
+                        <label class="field-heading">Customer Name</label>
+                        <p class="field-value">
+                            {{oneViewDetails.customerDetails.name?oneViewDetails.customerDetails.name:'N/A'}}</p>
+                    </span>
+                    <button class="buttons cursor-enabled" (click)="getCustomerOrdersDetails(oneViewDetails.customerDetails.contactNumber,oneViewDetails.customerDetails.name)"> View All
+                        Orders</button>
+
+                </div>
+                <div *ngIf="service !== Services.PND">
+                    <label class="field-heading">Customer Address</label>
+                    <p class="field-value">
+                        {{oneViewDetails.customerDetails.addressLine1?oneViewDetails.customerDetails.addressLine1:'N/A'}},
+                        {{oneViewDetails.customerDetails.addressLine2?oneViewDetails.customerDetails.addressLine2:'N/A'}},
+                        {{oneViewDetails.customerDetails.city?oneViewDetails.customerDetails.city:'N/A'}},
+                        {{oneViewDetails.customerDetails.state?oneViewDetails.customerDetails.state:'N/A'}} -
+                        {{oneViewDetails.customerDetails.pinCode?oneViewDetails.customerDetails.pinCode:'N/A'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Customer Contact Number</label>
+                    <p class="field-value">
+                        {{oneViewDetails.customerDetails.contactNumber?oneViewDetails.customerDetails.contactNumber:'N/A'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Customer Alternate Contact Number</label>
+                    <p class="field-value">
+                        {{oneViewDetails.customerDetails.alternateContactNumber?oneViewDetails.customerDetails.alternateContactNumber:'N/A'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Customer Email Id</label>
+                    <p class="field-value">
+                        {{oneViewDetails.customerDetails.email?oneViewDetails.customerDetails.email:'N/A'}}</p>
+                </div>
+            </article>
+        </div>
+        <!--Payment Details-->
+        <div>
+            <article class="cards cards--violet shadow mt-3">
+                <header>
+                    <h5><img class="img-cards--red" src="../../../assets/icons/payment-details-icon.svg"
+                            alt=""><strong>PAYMENT DETAILS</strong></h5>
+                </header>
+                <hr>
+                <div>
+                    <label class="field-heading">Txn ID</label>
+                    <p class="field-value">
+                        {{oneViewDetails.paymentDetails.txnId?oneViewDetails.paymentDetails.txnId:'N/A'}}</p>
+                </div>
+                <div>
+                    <label class="field-heading">Txn Amount</label>
+                    <p class="field-value">
+                        {{oneViewDetails.paymentDetails.txnAmount?oneViewDetails.paymentDetails.txnAmount:'N/A'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Txn Time</label>
+                    <p class="field-value">
+                        {{oneViewDetails.paymentDetails.txnTime?(oneViewDetails.paymentDetails.txnTime |date:
+                        'dd/MM/yyyy hh:mm:ss a'):'N/A'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Payment Method</label>
+                    <p class="field-value">
+                        {{oneViewDetails.paymentDetails.paymentMethod?oneViewDetails.paymentDetails.paymentMethod:'N/A'}}
+                    </p>
+                </div>
+                <!-- <div>
+                    <label class="field-heading">Pay On Delivery</label>
+                    <p class="field-value">
+                        {{oneViewDetails.paymentDetails.isPOD?oneViewDetails.paymentDetails.isPOD:'N/A'}}
+                    </p>
+                </div> -->
+                <div>
+                    <label class="field-heading">Payment Gateway</label>
+                    <p class="field-value">
+                        {{oneViewDetails.paymentDetails.paymentGateway?oneViewDetails.paymentDetails.paymentGateway:'N/A'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Payment ID</label>
+                    <p class="field-value">
+                        {{oneViewDetails.paymentDetails.paymentId?oneViewDetails.paymentDetails.paymentId:'N/A'}}</p>
+                </div>
+                <div>
+                    <label class="field-heading">Payment Status</label>
+                    <p class="field-value">
+                        {{oneViewDetails.paymentDetails.paymentStatus?oneViewDetails.paymentDetails.paymentStatus:'N/A'}}
+                    </p>
+                </div>
+            </article>
+        </div>
+        <!--Rider Details-->
+        <div>
+            <article class="cards cards--blue shadow mt-3">
+                <header>
+                    <h5><img class="img-cards--purple" src="../../../assets/icons/delivery-executive-icon.svg"
+                            alt=""><strong>RIDER DETAILS</strong></h5>
+                </header>
+                <hr>
+                <div>
+                    <label class="field-heading">Rider ID</label>
+                    <span class="d-flex justify-content-between">
+                        <p class="field-value">
+                            {{oneViewDetails.riderDetails.id?oneViewDetails.riderDetails.id:'N/A'}}</p>
+                        <button class="buttons cursor-enabled" (click)="showOutletAndRiderGoogleMap()"
+                            *ngIf="oneViewDetails.logs.orderAcceptanceTime && !oneViewDetails.logs.orderPickedupTime && oneViewDetails.riderDetails.riderLatitude && service !== Services.PND">Track
+                            Rider</button>
+                        <button class="buttons cursor-enabled" (click)="showRiderAndCustomerGoogleMap()"
+                            *ngIf="oneViewDetails.logs.orderPickedupTime && oneViewDetails.riderDetails.riderLatitude && service !== Services.PND">Track
+                            Rider</button>
+                            <button class="buttons cursor-enabled" (click)="showRiderToDropGoogleMap()"
+                            *ngIf="oneViewDetails.logs.orderPickedupTime && oneViewDetails.riderDetails.riderLatitude && service === Services.PND">Track
+                            Rider</button>
+                    </span>
+                </div>
+                <div>
+                    <label class="field-heading">Rider Name</label>
+                    <p class="field-value">
+                        {{oneViewDetails.riderDetails.name?oneViewDetails.riderDetails.name:'N/A'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Rider Contact Number</label>
+                    <p class="field-value">
+                        {{oneViewDetails.riderDetails.contactNumber?oneViewDetails.riderDetails.contactNumber:'N/A'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Rider Image</label>
+                    <p *ngIf="oneViewDetails.riderDetails.riderImageUrl"><a href="{{oneViewDetails.riderDetails.riderImageUrl}}"
+                            target="_blank"> View Image</a>
+                    </p>
+                    <p class="field-value" *ngIf="!oneViewDetails.riderDetails.riderImageUrl">
+                        N/A
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Client Order Id</label>
+                    <p class="field-value">
+                        {{oneViewDetails.riderDetails.clientOrderId?oneViewDetails.riderDetails.clientOrderId:'N/A'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Delivery Order Id</label>
+                    <p class="field-value">
+                        {{oneViewDetails.riderDetails.deliveryOrderId?oneViewDetails.riderDetails.deliveryOrderId:'N/A'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Delivery Service</label>
+                    <p class="field-value">
+                        {{oneViewDetails.riderDetails.deliveryService?oneViewDetails.riderDetails.deliveryService:'N/A'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Is Sponsored Rider ?</label>
+                    <p class="field-value">
+                        {{oneViewDetails.orderDetails.isSponsoredRider ? 'Yes' : 'No'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Delivery Status</label>
+                    <p class="field-value">
+                        {{oneViewDetails.riderDetails.deliveryStatus?oneViewDetails.riderDetails.deliveryStatus:'N/A'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Drop Eta</label>
+                    <p class="field-value">
+                        {{oneViewDetails.riderDetails.dropEta?oneViewDetails.riderDetails.dropEta:'N/A'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Pick Up Eta</label>
+                    <p class="field-value">
+                        {{oneViewDetails.riderDetails.pickUpEta?oneViewDetails.riderDetails.pickUpEta:'N/A'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Rider Latitude</label>
+                    <p class="field-value">
+                        {{oneViewDetails.riderDetails.riderLatitude?oneViewDetails.riderDetails.riderLatitude:'N/A'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Rider Longitude</label>
+                    <p class="field-value">
+                        {{oneViewDetails.riderDetails.riderLongitude?oneViewDetails.riderDetails.riderLongitude:'N/A'}}
+                    </p>
+                </div>
+
+            </article>
+        </div>
+               <!--POC Details-->
+               <div *ngIf="service !== Services.PND">
+                <article class="cards cards--peach shadow mt-3">
+                    <header>
+                        <h5><img class="img-cards--orange" src="assets/icons/poc-icon.svg" alt=""><strong>POC
+                                DETAILS</strong></h5>
+                    </header>
+                    <hr>
+                    <div *ngIf="oneViewDetails.restaurantDetails.pocList.length === 0">
+                        <strong>N/A</strong>
+                    </div>
+                    <div *ngIf="oneViewDetails.restaurantDetails.pocList.length > 0">
+                        <div *ngFor="let pocList of oneViewDetails.restaurantDetails.pocList; let i = index">
+                            <div>
+                                <label class="field-heading">Name</label>
+                                <p>{{ pocList.name ? pocList.name : 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <label class="field-heading">Number</label>
+                                <p>{{ pocList.number ? pocList.number : 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <label class="field-heading">Is Primary ?</label>
+                                <p>{{ pocList.isPrimary ? 'Yes' : 'No' }}</p>
+                            </div>
+                            <div>
+                                <label class="field-heading">Designation</label>
+                                <p>{{ pocList.designation ? pocList.designation : 'N/A' }}</p>
+                            </div>
+                            <hr *ngIf="i < oneViewDetails.restaurantDetails.pocList.length - 1">
+                        </div>
+                    </div>
+                </article>
+            </div>         
+        
+             <!--Time Details-->
+         <div *ngIf="service !== Services.PND">
+            <article class="cards cards--light-blue shadow mt-3">
+                <header>
+                    <h5><img class="img-cards--light-blue" src="../../../assets/icons/time-details.svg"
+                            alt=""><strong>TIME DETAILS</strong></h5>
+                </header>
+                <hr>
+                <h5 class="text-center text-uppercase mb-4"><strong>ETA When Order Placed</strong></h5>
+                <div>
+                    <label class="field-heading">Default Preparation Time</label>
+                    <p class="field-value">{{oneViewDetails.riderDetails.orderDefaultPreparationTime !== null ? oneViewDetails.riderDetails.orderDefaultPreparationTime + ' mins' : 'N/A'}}
+
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Order Placed At</label>
+                    <p class="field-value">{{oneViewDetails.riderDetails.orderPlacedEtaEpoch?oneViewDetails.riderDetails.orderPlacedEtaEpoch:'N/A'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Rider To Vendor ETA</label>
+                    <p class="field-value">{{oneViewDetails.riderDetails.riderToVendorEta !== (null || undefined)?oneViewDetails.riderDetails.riderToVendorEta + ' mins':'N/A'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Rider ETA From Vendor To Customer</label>
+                    <p class="field-value">{{oneViewDetails.riderDetails.riderFromVendorToCustomerEta !== (null || undefined)?oneViewDetails.riderDetails.riderFromVendorToCustomerEta + ' mins':'N/A'}}
+                    </p>
+                </div>  
+                <hr>
+                <h5 class="text-center text-uppercase mb-4"><strong>ETA When Vendor Accept</strong></h5> 
+                <div>
+                    <label class="field-heading">Preparation Time</label>
+                    <p class="field-value">{{oneViewDetails.riderDetails.vendorPreparationTime !== (null || undefined)?oneViewDetails.riderDetails.vendorPreparationTime + ' mins':'N/A'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Vendor Accepted At</label>
+                    <p class="field-value">{{oneViewDetails.riderDetails.vendorEpoch?oneViewDetails.riderDetails.vendorEpoch:'N/A'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Rider To Vendor ETA</label>
+                    <p class="field-value">{{oneViewDetails.riderDetails.vendorAcceptedRiderToVendorEta !== (null || undefined)?oneViewDetails.riderDetails.vendorAcceptedRiderToVendorEta + ' mins':'N/A'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Rider ETA From Vendor To Customer</label>
+                    <p class="field-value">{{oneViewDetails.riderDetails.vendorAcceptedRiderFromVendorToCustomerEta !== (null || undefined)?oneViewDetails.riderDetails.vendorAcceptedRiderFromVendorToCustomerEta + ' mins':'N/A'}}
+                    </p>
+                </div>
+                <hr>
+                <h5 class="text-center text-uppercase mb-4"><strong>Customer ETA</strong></h5>
+                <div>
+                    <label class="field-heading">Customer Visible ETA</label>
+                    <p class="field-value"><strong>{{ oneViewDetails.orderDetails.totalEta !== null?oneViewDetails.orderDetails.totalEta + ' mins' : 'N/A' }}</strong></p>                    
+                    </div> 
+                <div>
+                    <label class="field-heading">Customer Pickup ETA</label>
+                    <p class="field-value">{{oneViewDetails.orderDetails.customerPickUpEta !== null?oneViewDetails.orderDetails.customerPickUpEta + ' mins':'N/A'}}
+                    </p>
+                </div>
+                <div>
+                    <label class="field-heading">Customer Drop ETA</label>
+                    <p class="field-value">{{oneViewDetails.orderDetails.customerDropEta !== null?oneViewDetails.orderDetails.customerDropEta + ' mins':'N/A'}}
+                    </p>
+                </div>
+            </article>
+        </div>
+         <!--Order Logs--> 
+         <div>
+          
+
+             <article class="cards cards--yellow shadow mt-3">
+                 <header>
+                    <h5> <img class="img-cards--yellow" src="../../../assets/icons/order-logs-icon.svg" alt="">
+                        <strong>ORDER LOGS</strong>
+                    </h5>
+                </header>
+                <hr>
+                <mat-vertical-stepper [linear]="false">
+                    <mat-step *ngIf="oneViewDetails.logs.orderCreatedTime">
+                        <ng-template matStepLabel>Order Initiated</ng-template>
+                        <span class="field-value">
+                            {{oneViewDetails.logs.orderCreatedTime | date: 'dd/MM/yyyy hh:mm:ss a'}}
+                        </span>
+                        <button class="buttons cursor-enabled mt-3" (click)="showOutletAndCustomerGoogleMap()" *ngIf="service !== Services.PND">View
+                            Outlet to Customer Map</button>
+                    </mat-step>
+                    <mat-step *ngIf="oneViewDetails.logs.orderAcceptanceTime">
+                        <ng-template matStepLabel>Order Accepted</ng-template>
+                        <span class="field-value">
+                            {{oneViewDetails.logs.orderAcceptanceTime | date: 'dd/MM/yyyy hh:mm:ss a'}}
+                        </span>
+                        <button class="buttons cursor-enabled mt-3" (click)="showOutletAndRiderGoogleMap()"
+                            *ngIf="oneViewDetails.riderDetails.riderLatitude && service !== Services.PND">View Outlet to Rider Map</button>
+                    </mat-step>
+                    <mat-step *ngIf="oneViewDetails.logs.orderMarkedReadyTime">
+                        <ng-template matStepLabel>Order Marked Ready</ng-template>
+                        <span class="field-value">
+                            {{oneViewDetails.logs.orderMarkedReadyTime | date: 'dd/MM/yyyy hh:mm:ss a'}}
+                        </span>
+                    </mat-step>
+                    <mat-step *ngIf="oneViewDetails.logs.orderPickedupTime">
+                        <ng-template matStepLabel>Order Pickedup</ng-template>
+                        <span class="field-value">
+                            {{oneViewDetails.logs.orderPickedupTime | date: 'dd/MM/yyyy hh:mm:ss a'}}
+                        </span>
+                        <button class="buttons cursor-enabled mt-3" (click)="showRiderAndCustomerGoogleMap()" *ngIf="service !== Services.PND">View Rider
+                            to Customer Map</button>
+                    </mat-step>
+                    <mat-step *ngIf="oneViewDetails.logs.orderDeliveredTime">
+                        <ng-template matStepLabel>Order Delivered</ng-template>
+                        <span class="field-value">
+                            {{oneViewDetails.logs.orderDeliveredTime | date: 'dd/MM/yyyy hh:mm:ss a'}}
+                        </span>
+                    </mat-step>
+                    <mat-step *ngIf="oneViewDetails.logs.orderCancellationTime">
+                        <ng-template matStepLabel>Order Cancelled</ng-template>
+                        <span class="field-value">
+                            {{oneViewDetails.logs.orderCancellationTime | date: 'dd/MM/yyyy hh:mm:ss a'}}
+                        </span>
+                        <div>
+                            <label class="field-heading mt-3">Cancelled By</label>
+                            <p class="field-value">{{oneViewDetails.cancellationDetails.cancelledBy}}</p>
+                        </div>
+                        <div>
+                            <label class="field-heading">User Name</label>
+                            <p class="field-value">{{oneViewDetails.cancellationDetails.cancellationUserName ?
+                                oneViewDetails.cancellationDetails.cancellationUserName : 'N/A'}}</p>
+                        </div>
+                        <div>
+                            <label class="field-heading">Cancellation Reason</label>
+                            <p class="field-value text-break">{{oneViewDetails.cancellationDetails.reason}}</p>
+                        </div>
+                    </mat-step>
+                    <mat-step *ngIf="oneViewDetails.refundDetails.refundInitiatedTime">
+                        <ng-template matStepLabel>Refund Initiated</ng-template>
+                        <div class="d-flex justify-content-between">
+                            <span class="field-value">
+                                {{oneViewDetails.refundDetails.refundInitiatedTime | date: 'dd/MM/yyyy hh:mm:ss a'}}
+                            </span>
+                            <span class="cursor-enabled d-flex align-items-center"
+                                (click)="openDialog('refund details')">
+                                <strong><em><u>Refund Details</u></em></strong>
+                                <!-- <mat-icon>keyboard_arrow_down</mat-icon> -->
+                            </span>
+                        </div>
+                    </mat-step>
+                    <mat-step *ngIf="oneViewDetails.refundDetails.refundProcessedTime">
+                        <ng-template matStepLabel>Refund Processed</ng-template>
+                        <span class="field-value">
+                            {{oneViewDetails.refundDetails.refundProcessedTime | date: 'dd/MM/yyyy hh:mm:ss a'}}
+                        </span>
+                    </mat-step>
+                </mat-vertical-stepper>
+            </article>
+        </div> 
+        <!-- Order Items -->
+        <div *ngFor="let orderItem of oneViewDetails.orderItems; let i = index">
+            <div *ngIf="service === Services.PND">
+            <article class="cards cards--blue shadow mt-3">
+                <header>
+                    <h5><img class="img-cards--purple" src="../../../assets/icons/delivery-executive-icon.svg"
+                            alt=""><strong>Order Items</strong></h5>
+                </header>
+                    <hr>
+                    <div>
+                        <label class="field-heading">Drop Location Id</label>
+                        <p class="field-value">
+                            {{orderItem.dropLocationId?orderItem.dropLocationId:'N/A'}}
+                        </p>
+                    </div>
+                    <div>
+                        <label class="field-heading">External Id</label>
+                        <p class="field-value">
+                            {{orderItem.externalId?orderItem.externalId:'N/A'}}
+                        </p>
+                    </div>
+                    <div>
+                        <label class="field-heading">Order Item Id</label>
+                        <p class="field-value">
+                            {{orderItem.orderItemId?orderItem.orderItemId:'N/A'}}
+                        </p>
+                    </div>
+                    <div>
+                        <label class="field-heading">Name</label>
+                        <p class="field-value">
+                            {{orderItem.name?orderItem.name:'N/A'}}
+                        </p>
+                    </div>
+                    <div>
+                        <label class="field-heading">Pickup Location Id</label>
+                        <p class="field-value">
+                            {{orderItem.pickupLocationId?orderItem.pickupLocationId:'N/A'}}
+                        </p>
+                    </div>
+                    <div>
+                        <label class="field-heading">Price</label>
+                        <p class="field-value">
+                            {{orderItem.price?orderItem.price:'N/A'}}
+                        </p>
+                    </div>
+                    <div>
+                        <label class="field-heading">Quantity</label>
+                        <p class="field-value">
+                            {{orderItem.quantity?orderItem.quantity:'N/A'}}
+                        </p>
+                    </div>
+                </article>
+            </div>
+        </div>
+            <!-- order locations -->
+        <div *ngFor="let locationsDetail of oneViewDetails.orderLocations; let i = index">
+            <div *ngIf="service === Services.PND">
+                <article class="cards cards--green shadow mt-3">
+                    <header class="d-flex">
+                        <h5 ><img class="img-cards--blue" src="../../../assets/icons/order-details-icon.svg"alt="">
+                            <strong class="d-flex">
+                                ORDER LOCATIONS
+                            </strong>
+                        </h5>
+                            <div class="d-flex align-items-baseline ml-3">
+                                    <label class="field-heading d-flex" *ngIf="locationsDetail.visitSequence === 0">(Pick Up Location)</label>
+                                    <label class="field-heading d-flex" *ngIf="locationsDetail.visitSequence !== 0">(Drop Location)</label>
+                            </div>
+                    </header>
+                        <hr>
+                        <div>
+                            <button class="buttons cursor-enabled mt-3 mb-3" (click)="showRiderAndDropGoogleMap(locationsDetail.visitSequence)" *ngIf="oneViewDetails.riderDetails.riderLatitude">{{locationsDetail.type === 'pickup'? 'View Rider to Pickup Map' : 'View Rider to Drop Map'}}</button>
+                        </div>
+                        <div>
+                            <label class="field-heading">Visit Sequence</label>
+                            <p class="field-value">
+                                {{locationsDetail.visitSequence?locationsDetail.visitSequence:'N/A'}}
+                            </p>
+                        </div>
+                    <div>
+                        <label class="field-heading">Address</label>
+                        <p class="field-value">
+                            {{locationsDetail.address?locationsDetail.address:'N/A'}}
+                        </p>
+                    </div>
+                    <div>
+                        <label class="field-heading">Arrival ETA</label>
+                        <p class="field-value">
+                            {{locationsDetail.arrivalEta?locationsDetail.arrivalEta:'N/A'}}
+                        </p>
+                    </div>
+                    <div>
+                        <label class="field-heading">Contact Name</label>
+                        <p class="field-value">
+                            {{locationsDetail.contactName?locationsDetail.contactName:'N/A'}}
+                        </p>
+                    </div>
+                    <div>
+                        <label class="field-heading">Contact Phone</label>
+                        <p class="field-value">
+                            {{locationsDetail.contactPhone?locationsDetail.contactPhone:'N/A'}}
+                        </p>
+                    </div>
+                    <div>
+                        <label class="field-heading">Cancellation Reason</label>
+                        <p class="field-value">
+                            {{locationsDetail.cancellationReason?locationsDetail.cancellationReason:'N/A'}}
+                        </p>
+                    </div>
+                    <div>
+                        <label class="field-heading">Merchant POD Amount</label>
+                        <p class="field-value">
+                            {{locationsDetail.merchantPodAmount?locationsDetail.merchantPodAmount:'N/A'}}
+                        </p>
+                    </div>
+                    <div>
+                        <label class="field-heading">Delivery Completed At</label>
+                        <p class="field-value">
+                            {{locationsDetail.deliveryCompletedAt?locationsDetail.deliveryCompletedAt:'N/A'}}
+                        </p>
+                    </div>
+                    <div>
+                        <label class="field-heading">Order Location Id</label>
+                        <p class="field-value">
+                            {{locationsDetail.orderLocationId?locationsDetail.orderLocationId:'N/A'}}
+                        </p>
+                    </div>
+                    <div>
+                        <label class="field-heading">Delivery Order Location Id</label>
+                        <p class="field-value">
+                            {{locationsDetail.deliveryOrderLocationId?locationsDetail.deliveryOrderLocationId:'N/A'}}
+                        </p>
+                    </div>
+                    <div>
+                        <label class="field-heading">Delivery Status</label>
+                        <p class="field-value">
+                            {{locationsDetail.deliveryStatus?locationsDetail.deliveryStatus:'N/A'}}
+                        </p>
+                    </div>
+                    <div>
+                        <label class="field-heading">POD Status</label>
+                        <p class="field-value">
+                            {{locationsDetail.podStatus?locationsDetail.podStatus:'N/A'}}
+                        </p>
+                    </div>
+                    <div>
+                        <label class="field-heading">Type</label>
+                        <p class="field-value">
+                            {{locationsDetail.type?locationsDetail.type:'N/A'}}
+                        </p>
+                    </div>
+                    <div>
+                        <label class="field-heading">City Name</label>
+                        <p class="field-value">
+                            {{locationsDetail.cityName?locationsDetail.cityName:'N/A'}}
+                        </p>
+                    </div>
+                </article>
+            </div>
+        </div>
+            
+        
+    </main>
+</section>
+
+
+<ng-template #invoiceV1>
+    <div class="d-flex justify-content-between">
+        <span>
+            <span class="font-weight-bold">{{service !== Services.PND ? 'Item Total' : 'Total Cost'}}</span>
+            <p class="additional-info mb-2" *ngIf="service === Services.PND">(Speedyy Charges)</p>
+        </span>
+        <span>
+            <span class="field-value">{{oneViewDetails.orderDetails.totalItemCost}}</span>
+            <p class="additional-info" *ngIf="service === Services.PND">({{oneViewDetails.orderDetails.speedyyCharges}})</p>
+        </span>
+    </div>
+    <div class="d-flex justify-content-between mt-2" *ngIf="service !== Services.PND">
+        <label class="font-weight-bold">Total Packing Charges</label>
+        <span class="field-value">{{oneViewDetails.orderDetails.totalPackingCharges}}</span>
+    </div>
+    <div class="d-flex justify-content-between" *ngIf="service !== Services.PND">
+        <label class="font-weight-bold">Delivery Charges</label>
+        <span class="field-value">{{oneViewDetails.orderDetails.totalDeliveryCharges}}</span>
+    </div>
+    <div class="d-flex justify-content-between">
+        <label class="font-weight-bold">Taxes</label>
+        <span class="field-value">{{oneViewDetails.orderDetails.totalTax}}</span>
+    </div>
+    <div class="d-flex justify-content-between">
+        <label class="font-weight-bold">Transaction Charges</label>
+        <span class="field-value">{{oneViewDetails.orderDetails.txnCharges}}</span>
+    </div>
+    <div class="d-flex justify-content-between" *ngIf="oneViewDetails.couponDetails.discountAmount"
+        (click)="openDialog('coupon details')">
+        <label class="cursor-enabled d-flex align-items-center">Discount Details &nbsp;
+            <b>({{oneViewDetails.couponDetails.couponCode}})</b>
+            <mat-icon>keyboard_arrow_down</mat-icon>
+        </label>
+        <span class="field-value">- {{oneViewDetails.couponDetails.discountAmount}}</span>
+    </div>
+    <hr>
+    <div class="d-flex justify-content-between">
+        <label class="font-weight-bold">Total Customer Payable</label>
+        <span class="field-value font-weight-bold">
+            {{oneViewDetails.orderDetails.totalCustomerPayable}}</span>
+    </div>
+</ng-template>
+
+<ng-template #invoiceV2>
+    <h6><strong>Customer</strong></h6>
+    <div class="d-flex justify-content-between">
+        <label>Total Item Cost</label>
+        <span>{{oneViewDetails.orderDetails.totalItemCost}}</span>
+    </div>
+    <div class="d-flex justify-content-between">
+        <label>Packaging Charges</label>
+        <span>{{oneViewDetails.orderDetails.totalPackingCharges}}</span>
+    </div>
+    <div class="d-flex justify-content-between">
+        <label>GST (Item + Packaging)</label>
+        <span>{{oneViewDetails.orderDetails.totalTax}}</span>
+    </div>
+    <div class="d-flex justify-content-between"
+        *ngIf="oneViewDetails.orderDetails.deliveryChargesPaidBy === 'customer'">
+        <label>Delivery Charges (inclusive of GST)</label>
+        <span>{{oneViewDetails.orderDetails.totalDeliveryCharges}}</span>
+    </div>
+    <div class="d-flex justify-content-between" *ngIf="oneViewDetails.couponDetails.discountAmount"
+        (click)="openDialog('coupon details')">
+        <label class="cursor-enabled d-flex align-items-center">Discount Details &nbsp;
+            <b>({{oneViewDetails.couponDetails.couponCode}})</b>
+            <mat-icon>keyboard_arrow_down</mat-icon>
+        </label>
+        <span>- {{oneViewDetails.couponDetails.discountAmount}}</span>
+    </div>
+    <div class="d-flex justify-content-between">
+        <label><strong>Total Customer Payable</strong></label>
+        <span><strong>{{oneViewDetails.orderDetails.totalCustomerPayable}}</strong></span>
+    </div>
+    <hr>
+    <h6><strong>Vendor</strong></h6>
+    <div class="d-flex justify-content-between">
+        <label>GST (Item + Packaging)</label>
+        <span>- {{oneViewDetails.orderDetails.totalTax}}</span>
+    </div>
+    <div class="d-flex justify-content-between">
+        <label>Delivery Charges</label>
+        <span>- {{oneViewDetails.orderDetails.totalDeliveryCharges}}</span>
+    </div>
+    <div class="d-flex justify-content-between">
+        <label>Transaction Charges</label>
+        <span>- {{oneViewDetails.orderDetails.txnCharges}}</span>
+    </div>
+    <div class="d-flex justify-content-between" *ngIf="oneViewDetails.couponDetails.discountAmount">
+        <label>Discount by Speedyy</label>
+        <span>{{oneViewDetails.couponDetails.speedyyDiscountShareAmount}}</span>
+    </div>
+    <div class="d-flex justify-content-between">
+        <label><strong>Vendor Payout Amount</strong></label>
+        <span><strong>{{oneViewDetails.orderDetails.vendorPayoutAmount}}</strong></span>
+    </div>
+</ng-template>
+
+<ng-template #invoiceLineItems>
+    <h6><strong>Customer</strong></h6>
+    <div class="d-flex justify-content-between" *ngFor="let payabelAmt of oneViewDetails.adminInvoiceSections.customerSectionPayableAmountLineItems">
+        <label [ngClass]="{'strikeThrough' : payabelAmt.isStrikethrough}" [ngStyle]="{'color' : payabelAmt.displayLabelColor}">{{payabelAmt.displayLabel}}</label>
+        <span [ngClass]="{'strikeThrough' : payabelAmt.isStrikethrough}" [ngStyle]="{'color' : payabelAmt.displayLabelColor}">{{payabelAmt.amount}}</span>
+    </div>
+    <div class="d-flex justify-content-between">
+        <label [ngClass]="{'strikeThrough' : oneViewDetails.adminInvoiceSections.customerSectionTotalPayableAmount.isStrikethrough}" [ngStyle]="{'color' : oneViewDetails.adminInvoiceSections.customerSectionTotalPayableAmount.displayLabelColor}">{{oneViewDetails.adminInvoiceSections.customerSectionTotalPayableAmount.displayLabel}}</label>
+        <span [ngClass]="{'strikeThrough' : oneViewDetails.adminInvoiceSections.customerSectionTotalPayableAmount.isStrikethrough}" [ngStyle]="{'color' : oneViewDetails.adminInvoiceSections.customerSectionTotalPayableAmount.displayLabelColor}">{{oneViewDetails.adminInvoiceSections.customerSectionTotalPayableAmount.amount}}</span>
+    </div>
+    <hr>
+    <h6><strong>Vendor</strong></h6>
+    <div class="d-flex justify-content-between" *ngFor="let payoutAmt of oneViewDetails.adminInvoiceSections.vendorSectionPayoutAmountLineItems">
+        <label [ngClass]="{'strikeThrough' : payoutAmt.isStrikethrough}" [ngStyle]="{'color' : payoutAmt.displayLabelColor}">{{payoutAmt.displayLabel}}</label>
+        <span [ngClass]="{'strikeThrough' : payoutAmt.isStrikethrough}" [ngStyle]="{'color' : payoutAmt.displayLabelColor}">{{payoutAmt.amount}}</span>
+    </div>
+    <div class="d-flex justify-content-between">
+        <label [ngClass]="{'strikeThrough' : oneViewDetails.adminInvoiceSections.vendorSectionTotalPayoutAmount.isStrikethrough}" [ngStyle]="{'color' : oneViewDetails.adminInvoiceSections.vendorSectionTotalPayoutAmount.displayLabelColor}">{{oneViewDetails.adminInvoiceSections.vendorSectionTotalPayoutAmount.displayLabel}}</label>
+        <span [ngClass]="{'strikeThrough' : oneViewDetails.adminInvoiceSections.vendorSectionTotalPayoutAmount.isStrikethrough}" [ngStyle]="{'color' : oneViewDetails.adminInvoiceSections.vendorSectionTotalPayoutAmount.displayLabelColor}">{{oneViewDetails.adminInvoiceSections.vendorSectionTotalPayoutAmount.amount}}</span>
+    </div>
+</ng-template>
+
+<ng-template #invoiceLineItemsPND>
+    <div class="d-flex justify-content-between" *ngFor="let payabelAmt of oneViewDetails.adminInvoiceSections.customerSectionPayableAmountLineItems">
+        <label [ngClass]="{'strikeThrough' : payabelAmt.isStrikethrough}" [ngStyle]="{'color' : payabelAmt.displayLabelColor}">{{payabelAmt.displayLabel}}</label>
+        <span [ngClass]="{'strikeThrough' : payabelAmt.isStrikethrough}" [ngStyle]="{'color' : payabelAmt.displayLabelColor}">{{payabelAmt.amount}}</span>
+    </div>
+    <div class="d-flex justify-content-between">
+        <label [ngClass]="{'strikeThrough' : oneViewDetails.adminInvoiceSections.customerSectionTotalPayableAmount.isStrikethrough}" [ngStyle]="{'color' : oneViewDetails.adminInvoiceSections.customerSectionTotalPayableAmount.displayLabelColor}"><strong>{{oneViewDetails.adminInvoiceSections.customerSectionTotalPayableAmount.displayLabel}}</strong></label>
+        <span [ngClass]="{'strikeThrough' : oneViewDetails.adminInvoiceSections.customerSectionTotalPayableAmount.isStrikethrough}" [ngStyle]="{'color' : oneViewDetails.adminInvoiceSections.customerSectionTotalPayableAmount.displayLabelColor}"><strong>{{oneViewDetails.adminInvoiceSections.customerSectionTotalPayableAmount.amount}}</strong></span>
+    </div>
+</ng-template>

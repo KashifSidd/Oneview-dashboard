@@ -1,0 +1,176 @@
+// Variables
+$background-color: #f5f9fc;
+$white: #fff;
+$cursor: pointer;
+$primary-color: #a3da8d;
+$secondary-color: #0d1d28;
+$disabled-color: #ccc;
+// Mixins
+@mixin height-width {
+    height: 90%;
+    width: 100%;
+    background-color: $background-color !important;
+}
+
+@mixin mat-stepper-style {
+    .mat-stepper-vertical-line::before {
+        border-left-color: $primary-color;
+    }
+    .mat-step-icon .mat-icon {
+        display: none;
+    }
+    .mat-step-icon-content,
+    .mat-step-icon .mat-icon {
+        display: none;
+    }
+    .mat-step-header .mat-step-icon {
+        background-color: $primary-color;
+    }
+    .mat-step-header .mat-step-icon-selected,
+    .mat-step-header .mat-step-icon-state-done,
+    .mat-step-header .mat-step-icon-state-edit {
+        background-color: $primary-color;
+    }
+}
+
+// Global styles
+@import "~bootstrap/scss/bootstrap";
+@import "~ngx-toastr/toastr";
+body {
+    margin: 0;
+    font-family: "Poppins", "Helvetica Neue", sans-serif !important;
+    @include height-width;
+}
+
+// Form styles
+.input-field {
+    background: $background-color;
+    border-radius: 10px;
+    padding: 0.5em 1em;
+    border: none;
+    height: 45px;
+     ::placeholder {
+        color: #a7a8ae;
+    }
+    &:focus {
+        outline: 0px;
+        box-shadow: none;
+    }
+}
+
+.input-details {
+    display: flex;
+    flex-direction: column;
+    grid-gap: 0.3em;
+}
+
+.input-heading {
+    font-weight: 500;
+    font-size: 18px;
+}
+
+.buttons {
+    min-width: 150px !important;
+    height: 40px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $secondary-color;
+    color: $white;
+    font-size: 16px;
+    font-weight: 300;
+    transition: 0.5s;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    border-radius: 10px !important;
+    border: 1px solid transparent;
+}
+
+.mat-form-field {
+    font-family: Poppins, "Helvetica Neue", sans-serif !important;
+    .mat-form-field-wrapper {
+        padding-bottom: 0 !important;
+        .mat-form-field-flex {
+            align-items: center !important;
+            height: 3rem;
+        }
+    }
+    a {
+        color: $secondary-color !important;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+        font-size: 0.9em;
+        cursor: $cursor;
+    }
+}
+
+.mat-form-field-appearance-legacy .mat-form-field-wrapper {
+    padding-bottom: 1.25em !important;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 0.5em 0 1em 0 !important;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline .mat-form-field-outline-start {
+    border-radius: 8px 0 0 8px !important;
+    background-color: $white !important;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline .mat-form-field-outline-end {
+    border-radius: 0 8px 8px 0 !important;
+}
+
+.mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+    color: $secondary-color !important;
+}
+
+.mat-form-field-disabled .mat-form-field-outline .mat-form-field-outline-end,
+.mat-form-field-outline-start {
+    background-color: #f9f9f9;
+}
+
+.mat-form-field-appearance-outline.mat-form-field-disabled .mat-form-field-outline {
+    color: $disabled-color;
+}
+
+// Stepper styles
+.mat-stepper-vertical {
+    background-color: transparent;
+    .mat-step-header .mat-step-label.mat-step-label-active {
+        font-size: 18px;
+        font-weight: 600;
+    }
+    @include mat-stepper-style;
+}
+
+.mat-vertical-stepper-header {
+    height: 2px;
+}
+
+.mat-vertical-stepper-content {
+    overflow: hidden;
+    outline: 0;
+    visibility: visible !important;
+    height: fit-content !important;
+}
+
+.mat-dialog-container {
+    padding: 0 !important;
+    border-radius: 2em !important;
+    box-shadow: none !important;
+}
+
+.cursor-enabled {
+    cursor: $cursor;
+}
+
+.mat-menu-panel {
+    padding: 0.2rem !important;
+    margin-left: 0.5rem;
+}
+.strikeThrough {
+    text-decoration: line-through;
+}

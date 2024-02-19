@@ -1,0 +1,116 @@
+<div class="dialog-wrapper">
+    <!--Discount Details-->
+    <article class="cards cards--powder-purple" *ngIf="data.openedFor === 'coupon details'">
+        <header class="d-flex align-items-center justify-content-between w-100">
+            <span class="d-flex align-items-center"><img class="img-dialog--icon"
+                    src="../../../../assets/icons/discount-details-icon.svg" alt="discount-details">
+                <h3><strong>Discount Details</strong></h3>
+            </span>
+            <mat-icon [mat-dialog-close]="true">close</mat-icon>
+        </header>
+        <hr>
+        <table>
+            <tr>
+                <th>Coupon ID</th>
+                <th>Coupon Name</th>
+                <th>Discount (&#8377;)</th>
+            </tr>
+            <tr>
+                <td>{{couponDetails.couponId ? couponDetails.couponId : '---'}}</td>
+                <td>{{couponDetails.couponCode ? couponDetails.couponCode : '---'}}</td>
+                <td>{{couponDetails.discountAmount ? couponDetails.discountAmount : '---'}}</td>
+            </tr>
+            <tr>
+                <th>Discount (%)</th>
+                <th>Speedyy Discount Share (&#8377;)</th>
+                <th>Speedyy Discount Share (%)</th>
+            </tr>
+            <tr>
+                <td>{{couponDetails.discountPercentage ? couponDetails.discountPercentage : '---'}}</td>
+                <td>{{couponDetails.speedyyDiscountShareAmount ? couponDetails.speedyyDiscountShareAmount : '---'}}</td>
+                <td>{{couponDetails.speedyyDiscountSharePercentage ? couponDetails.speedyyDiscountSharePercentage : '---'}}</td>
+            </tr>
+            <tr>
+                <th>Vendor Discount Share (&#8377;)</th>
+                <th>Vendor Discount Share (%)</th>
+                <th>Discount Level</th>
+            </tr>
+            <tr>
+                <td>{{couponDetails.vendorDiscountShareAmount ? couponDetails.vendorDiscountShareAmount : '---'}}
+                </td>
+                <td>{{couponDetails.vendorDiscountSharePercentage ? couponDetails.vendorDiscountSharePercentage : '---'}}</td>
+                <td>{{couponDetails.discountLevel ? couponDetails.discountLevel : '---'}}</td>
+            </tr>
+            <tr>
+                <th>Discount Type</th>
+                <th>Maximum Discount (&#8377;)</th>
+                <th>Minimum Order Value</th>
+            </tr>
+            <tr>
+                <td>{{couponDetails.discountLevel ? couponDetails.discountLevel : '---'}}</td>
+                <td>{{couponDetails.maxDiscountAmount ? couponDetails.maxDiscountAmount : '---'}}</td>
+                <td>{{couponDetails.minOrderValue ? couponDetails.minOrderValue : '---'}}</td>
+            </tr>
+        </table>
+    </article>
+    <!--Refund Details-->
+    <article class="cards cards--powder-purple" *ngIf="data.openedFor === 'refund details'">
+        <header class="d-flex align-items-center justify-content-between w-100">
+            <span class="d-flex align-items-center"><img class="img-dialog--icon"
+                    src="../../../../assets/icons/refund-details-icon.svg" alt="refund-details">
+                <h5><strong>REFUND DETAILS</strong></h5>
+            </span>
+            <mat-icon [mat-dialog-close]="true">close</mat-icon>
+        </header>
+        <hr>
+        <table>
+            <tr>
+                <th colspan="2">Refund ID</th>
+                <th>Payment ID</th>
+            </tr>
+            <tr>
+                <td colspan="2">{{refundDetails.refundId ? refundDetails.refundId : 'NA'}}</td>
+                <td>{{refundDetails.refundPaymentId}}</td>
+            </tr>
+            <tr>
+                <th *ngIf="service !== Services.PND">Vendor Payout Amount</th>
+                <th>Delivery Partner Amount</th>
+                <th>Customer Refundable Amount</th>
+            </tr>
+            <tr>
+                <td *ngIf="service !== Services.PND">{{refundDetails.vendorPayoutAmount}}</td>
+                <td>{{refundDetails.deliveryPartnerAmount}}</td>
+                <td>{{refundDetails.customerRefundableAmount}}</td>
+            </tr>
+            <tr>
+                <th *ngIf="service !== Services.PND">Remarks for Vendor</th>
+                <th>Remarks for Delivery Partner</th>
+                <th>Remarks for Customer</th>
+                <tr>
+                    <td *ngIf="service !== Services.PND">{{refundDetails.remarksForVendor}}</td>
+                    <td>{{refundDetails.remarksForDeliveryPartner}}</td>
+                    <td>{{refundDetails.remarksForCustomer}}</td>
+                </tr>
+                <tr>
+                    <th>Refund Status</th>
+                    <th>Refund Status Remarks</th>
+                    <th>Refund Charges</th>
+                </tr>
+                <tr>
+                    <td>{{refundDetails.refundStatus}}</td>
+                    <td>{{refundDetails.statusDesc}}</td>
+                    <td>{{refundDetails.refundCharges}}</td>
+                </tr>
+                <tr>
+                    <th>Refund Gateway</th>
+                    <th>Refund Initiated Time</th>
+                    <th>Refund Processed Time</th>
+                </tr>
+                <tr>
+                    <td>{{refundDetails.refundGateway}}</td>
+                    <td>{{refundDetails.refundInitiatedTime | date: 'dd/MM/yyyy hh:mm:ss a'}}</td>
+                    <td>{{refundDetails.refundProcessedTime ? (refundDetails.refundProcessedTime | date: 'dd/MM/yyyy hh:mm:ss a') : 'NA'}}</td>
+                </tr>
+        </table>
+    </article>
+</div>
